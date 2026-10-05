@@ -1,0 +1,56 @@
+{
+  "hash": "1d146f59",
+  "configHash": "7ce2cc19",
+  "lockfileHash": "e3b0c442",
+  "browserHash": "8bcf586b",
+  "optimized": {
+    "gsap": {
+      "src": "../../itProject/ss8/node_modules/gsap/index.js",
+      "file": "gsap.js",
+      "fileHash": "b7630372",
+      "needsInterop": false
+    },
+    "gsap/ScrollSmoother": {
+      "src": "../../itProject/ss8/node_modules/gsap/ScrollSmoother.js",
+      "file": "gsap_ScrollSmoother.js",
+      "fileHash": "60587c19",
+      "needsInterop": false
+    },
+    "gsap/ScrollTrigger": {
+      "src": "../../itProject/ss8/node_modules/gsap/ScrollTrigger.js",
+      "file": "gsap_ScrollTrigger.js",
+      "fileHash": "18cc9861",
+      "needsInterop": false
+    },
+    "three": {
+      "src": "../../itProject/ss8/node_modules/three/build/three.module.js",
+      "file": "three.js",
+      "fileHash": "a573eb59",
+      "needsInterop": false
+    },
+    "three/examples/jsm/loaders/GLTFLoader.js": {
+      "src": "../../itProject/ss8/node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+      "file": "three_examples_jsm_loaders_GLTFLoader__js.js",
+      "fileHash": "455d7030",
+      "needsInterop": false
+    },
+    "three/examples/jsm/loaders/RGBELoader.js": {
+      "src": "../../itProject/ss8/node_modules/three/examples/jsm/loaders/RGBELoader.js",
+      "file": "three_examples_jsm_loaders_RGBELoader__js.js",
+      "fileHash": "07999aaf",
+      "needsInterop": false
+    },
+    "three/examples/jsm/postprocessing/Pass.js": {
+      "src": "../../itProject/ss8/node_modules/three/examples/jsm/postprocessing/Pass.js",
+      "file": "three_examples_jsm_postprocessing_Pass__js.js",
+      "fileHash": "9b23c645",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "three.module-C5Ih-l_A": {
+      "file": "three.module-C5Ih-l_A.js",
+      "isDynamicEntry": false
+    }
+  }
+}
