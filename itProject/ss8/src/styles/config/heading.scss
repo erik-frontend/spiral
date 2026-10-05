@@ -1,0 +1,115 @@
+@import './colors.scss';
+@import './viewport';
+
+@mixin text-heading-styles {
+    margin: 0;
+    font-family: $font-family-title;
+    line-height: 100%;
+    color: var(--color-white);
+}
+
+@mixin text-heading-1 {
+    @include text-heading-styles;
+
+    font-weight: 800;
+
+    @include viewport-desktop {
+        font-size: 36px;
+    }
+
+    @include viewport-tablet {
+        font-size: 32px;
+    }
+
+    @include viewport-phone {
+        font-size: 28px;
+    }
+}
+
+@mixin text-heading-2 {
+    @include text-heading-styles;
+
+    color: var(--color-black);
+    font-weight: 700;
+
+    @include viewport-desktop {
+        font-size: 32px;
+    }
+
+    @include viewport-tablet {
+        font-size: 32px;
+    }
+
+    @include viewport-phone {
+        font-size: 24px;
+
+    }
+}
+
+@mixin text-heading-3 {
+    @include text-heading-styles;
+    font-family: $font-family-subtitle;
+    font-weight: 700;
+    line-height: 183%;
+    letter-spacing: 0.02em;
+
+    @include viewport-desktop {
+        font-size: 24px;
+    }
+
+    @include viewport-tablet {
+        font-size: 22px;
+    }
+
+    @include viewport-phone {
+        font-size: 20px;
+    }
+}
+
+@mixin text-heading-4 {
+    @include text-heading-styles;
+
+    @include viewport-desktop {
+        font-size: 16px;
+    }
+
+    @include viewport-tablet {
+        font-size: 16px;
+    }
+
+    @include viewport-phone {
+        font-size: 16px;
+    }
+}
+
+@mixin text-heading-5 {
+    @include text-heading-styles;
+
+    @include viewport-desktop {
+        font-size: 14px;
+    }
+
+    @include viewport-tablet {
+        font-size: 14px;
+    }
+
+    @include viewport-phone {
+        font-size: 14px;
+    }
+}
+
+@mixin text-heading-6 {
+    @include text-heading-styles;
+
+    @include viewport-desktop {
+        font-size: 12px;
+    }
+
+    @include viewport-tablet {
+        font-size: 12px;
+    }
+
+    @include viewport-phone {
+        font-size: 12px;
+    }
+}

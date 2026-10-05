@@ -1,0 +1,9 @@
+@import './viewport';
+
+:root {
+  --wrap: calc((100vw - 1730px) / 2);
+
+  @media (max-width: 1770px) {
+    --wrap: 20px;
+  }
+}
