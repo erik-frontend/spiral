@@ -7,14 +7,14 @@ import { createRibbonMaterial } from './ribbonMaterial.js';
 import { SecondOrderScalar } from './SecondOrderScalar.js';
 import { rasterizeTitle } from './rasterizeTitle.js';
 
-// ─── Конфигурация ───────────────────────────────────────────────────
-// Всё, что стоит крутить, собрано здесь.
-// Определяем мобильное или слабое устройство
+//Конфигурация
+
+// определяет что это за утсройство
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
                  || window.innerWidth < 768;
 
 export const CFG = {
-    NODES: isMobile ? 100 : 140,       // Уменьшено количество колец (было 220)
+    NODES: isMobile ? 100 : 140,       // количество колец
     TURNS: 1.18,          
     WIDTH: 0.22,          
     THICKNESS: 0.055,     
@@ -33,7 +33,7 @@ export const CFG = {
     REFRACT_MIX: 0.4,     
     EXPOSURE: 0.95,
 
-    BLUR_SCALE: isMobile ? 0.1 : 0.15, // Снижено разрешение размытия (было 0.25)
+    BLUR_SCALE: isMobile ? 0.1 : 0.15, // размытие
     BLUR_RADIUS: isMobile ? 2 : 3,     
 
     TILT: 0.3,            
@@ -42,10 +42,10 @@ export const CFG = {
     SCALE_POINTER: 5.0,   
 
     STEP_MS: 1000 / 60,
-    MAX_SUBSTEPS: 3,                   // Снижено с 5 до 3, чтобы избежать просадок при фризах
+    MAX_SUBSTEPS: 3,                   // можно понизить если сайт фризит
 };
 
-// ─── Шейдер сепарабельного блюра ────────────────────────────────────
+// Шейдер сепарабельного блюра
 const blurFrag = /* glsl */ `
     precision highp float;
     varying vec2 vUv;
@@ -82,18 +82,18 @@ function gaussianWeights(radius) {
     return w;
 }
 
-// ─── Основной класс ─────────────────────────────────────────────────
+// Основной класс 
 export class HeroRibbon {
     constructor(canvas, titleEl) {
         this.canvas = canvas;
         this.titleEl = titleEl;
 
-        // На мобильных устройствах DPR ограничиваем 1.25, на десктопе — 1.5 (было 2.0)
+        // На мобильных устройствах DPR ограничиваем 1.25, на десктопе — 1.5
 this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 1.5);
         this.w = canvas.offsetWidth || window.innerWidth;
         this.h = canvas.offsetHeight || Math.round(window.innerWidth * 0.6);
 
-        // ── Renderer ─────────────────────────────────────────────────
+        // Renderer
         this.renderer = new THREE.WebGLRenderer({
             canvas,
             antialias: true,
@@ -106,14 +106,14 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.renderer.setClearColor(0x000000, 0);
         this.renderer.autoClear = true;
 
-        // ── Камера ───────────────────────────────────────────────────
+        // Камера
         this.camera = new THREE.PerspectiveCamera(45, this.w / this.h, 0.01, 15);
         this.camera.position.set(0, 0, 3);
         this.camera.lookAt(0, 0, 0);
 
         this.scene = new THREE.Scene();
 
-        // ── Текстовая плоскость ──────────────────────────────────────
+        // Текстовая плоскость 
         this.textCanvas = document.createElement('canvas');
         this.textTexture = new THREE.CanvasTexture(this.textCanvas);
         this.textTexture.colorSpace = THREE.SRGBColorSpace;
@@ -134,13 +134,17 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.textPlane.renderOrder = 10; // рисуется после ленты
         this.scene.add(this.textPlane);
 
-        // ── Лента ────────────────────────────────────────────────────
+
+
+        // лента
         this.material = createRibbonMaterial(CFG);
         this.ribbon = null;
         this.walker = null;
         this._buildRibbon();
 
-        // ── Проход преломления + блюр ────────────────────────────────
+
+
+        // Проход преломления + блюр 
         const rtOpts = {
             minFilter: THREE.LinearFilter,
             magFilter: THREE.LinearFilter,
@@ -167,7 +171,10 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
 
         this.material.uniforms.uContent.value = this.rtA.texture;
 
-        // ── Пружины ──────────────────────────────────────────────────
+
+
+
+        // ---------------------------------------------------------------------
         this.tiltX = new SecondOrderScalar(CFG.SPRING_TILT.f, CFG.SPRING_TILT.z, 0, 0);
         this.tiltY = new SecondOrderScalar(CFG.SPRING_TILT.f, CFG.SPRING_TILT.z, 0, 0);
         this.scaleSpring = new SecondOrderScalar(CFG.SPRING_SCALE.f, CFG.SPRING_SCALE.z, 0, 1);
@@ -184,7 +191,9 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this._to = new THREE.Vector3();
         this._tiltScale = new THREE.Vector3(0.8, 0.8, 1);
 
-        // ── Клок ─────────────────────────────────────────────────────
+
+
+        // ----------------------------------------------------------------------
         this.totalMs = 0;
         this.accumulator = 0;
         this.lastTime = 0;
@@ -196,7 +205,7 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.resize();
     }
 
-    // ────────────────────────────────────────────────────────────────
+    // --------------------------------------------------------------
     get topWs() {
         return this.camera.position.z * Math.tan((this.camera.fov * Math.PI) / 360);
     }
@@ -238,7 +247,7 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.scene.add(this.ribbon);
     }
 
-    // ────────────────────────────────────────────────────────────────
+    // ----------------------------------------------------------------
     _bindEvents() {
         this._onPointer = (e) => {
             this.pointer.set(e.clientX / window.innerWidth, 1 - e.clientY / window.innerHeight);
@@ -262,6 +271,8 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         };
         window.addEventListener('resize', this._onResize);
 
+
+
         // rAF крутится только пока hero в кадре
         if ('IntersectionObserver' in window) {
             this._io = new IntersectionObserver(
@@ -276,7 +287,7 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         }
     }
 
-    // ────────────────────────────────────────────────────────────────
+    //--------------------------------------------------------------------
     resize() {
         const w = this.canvas.offsetWidth;
         const h = this.canvas.offsetHeight;
@@ -310,6 +321,10 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.refreshTitle();
     }
 
+
+
+
+
     /** Перерисовать текстуру заголовка. Вызывать после смены шрифта/размера. */
     refreshTitle() {
         if (!this.titleEl) return;
@@ -326,15 +341,16 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.textTexture.needsUpdate = true;
     }
 
-    // ────────────────────────────────────────────────────────────────
+    
+    // ---------------------------------------
     _step(dtMs) {
         const dt = dtMs / 1000;
 
-        // A + B — голова ползёт по сфере
+        // A + B голова ползёт по сфере
         const head = this.walker.step(this.totalMs, dtMs);
         this.ribbon.geometry.moveTo(head);
 
-        // C — наклон за курсором. Берём только CFG.TILT долю полного поворота.
+        // C наклон за курсором. Берём только CFG.TILT долю полного поворота
         this._to
             .set(this.pointer.x * 2 - 1, this.pointer.y * 2 - 1, 1)
             .multiply(this._tiltScale)
@@ -366,14 +382,14 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.camera.updateMatrixWorld();
 
         this.renderer.setRenderTarget(this.rtA);
-        this.renderer.setClearColor(0xffffff, 1); // белый фон = «пусто»
+        this.renderer.setClearColor(0xffffff, 1); // белый фон =пусто
         this.renderer.clear();
         this.renderer.render(this.scene, this.camera);
 
         this.camera.position.z += 0.2;
         this.camera.updateMatrixWorld();
 
-        // Сепарабельный гауссов блюр: rtA → rtB (гор.) → rtA (верт.)
+        //rtA → rtB (гор.) → rtA (верт.)
         const bw = this.rtA.width;
         const bh = this.rtA.height;
 
@@ -398,7 +414,8 @@ this.dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(wi
         this.renderer.render(this.scene, this.camera);
     }
 
-    // ────────────────────────────────────────────────────────────────
+   
+
     _loop = (time) => {
         if (!this.running) return;
         this.rafId = requestAnimationFrame(this._loop);
